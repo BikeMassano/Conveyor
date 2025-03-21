@@ -10,60 +10,60 @@ from Model.Enums.ProductComplexity import ProductComplexity
 class MainView:
     # Конструктор класса
     def __init__(self, controller):
-        self.controller = controller
-        self.window = tk.Tk()
+        self._controller = controller
+        self.__window = tk.Tk()
 
         # Регистрация команды валидирования float данных
-        self.validate_float_cmd = self.window.register(self.validate_float)
+        self.__validate_float_cmd = self.__window.register(self.__validate_float)
 
         # Настройка окна
-        self.window.title("Вариант 19. Определение требуемого количества постов конвейерной линии.")
-        self.window.geometry("700x400")
-        self.window.minsize(700, 400)
+        self.__window.title("Вариант 19. Определение требуемого количества постов конвейерной линии.")
+        self.__window.geometry("700x400")
+        self.__window.minsize(700, 400)
 
         # Настройка сетки
-        self.window.columnconfigure(0, weight=1)
-        self.window.columnconfigure(1, weight=1)
+        self.__window.columnconfigure(0, weight=1)
+        self.__window.columnconfigure(1, weight=1)
 
-        self.window.rowconfigure(0, weight=1)
-        self.window.rowconfigure(1, weight=1)
+        self.__window.rowconfigure(0, weight=1)
+        self.__window.rowconfigure(1, weight=1)
         
         # Создание виджетов ввода данных
 
         # Виджет выбора типа операции
-        self.operation_type_label = ttk.Label(self.window, text="Вид операций:")
-        self.operation_type_combo = ttk.Combobox(self.window, values=[e.value for e in OperationType], state="readonly")
-        self.operation_type_combo.bind("<<ComboboxSelected>>", self.on_element_change)
+        self.operation_type_label = ttk.Label(self.__window, text="Вид операций:")
+        self.operation_type_combo = ttk.Combobox(self.__window, values=[e.value for e in OperationType], state="readonly")
+        self.operation_type_combo.bind("<<ComboboxSelected>>", self.__on_element_change)
 
         # Виджет выбора сложности изделия
-        self.product_complexity_label = ttk.Label(self.window, text="Сложность изделия:")
-        self.product_complexity_combo = ttk.Combobox(self.window, values=[e.value for e in ProductComplexity], state="readonly")
-        self.product_complexity_combo.bind("<<ComboboxSelected>>", self.on_element_change)
+        self.product_complexity_label = ttk.Label(self.__window, text="Сложность изделия:")
+        self.product_complexity_combo = ttk.Combobox(self.__window, values=[e.value for e in ProductComplexity], state="readonly")
+        self.product_complexity_combo.bind("<<ComboboxSelected>>", self.__on_element_change)
 
         # Виджет ввода средней продолжительности операции на доформовочном участке(мин):
-        self.preform_operation_time_label = ttk.Label(self.window, text="Средняя продолжительность операции на доформовочном участке(мин):")
+        self.preform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на доформовочном участке(мин):")
         # Валидация entry происходит при нажатии клавиши(validate="key"), %P - подстановка после применения изменений
-        self.preform_operation_time_entry = ttk.Entry(self.window, validate="key", validatecommand=(self.validate_float_cmd, '%P'))
+        self.preform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
 
         # Виджет ввода средней продолжительности операции на формовочном участке(мин):
-        self.form_operation_time_label = ttk.Label(self.window, text="Средняя продолжительность операции на формовочном участке(мин):")
-        self.form_operation_time_entry = ttk.Entry(self.window, validate="key", validatecommand=(self.validate_float_cmd, '%P'))
+        self.form_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на формовочном участке(мин):")
+        self.form_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
 
         # Виджет ввода средней продолжительности операции на послеформовочном участке(мин):
-        self.postform_operation_time_label = ttk.Label(self.window, text="Средняя продолжительность операции на послеформовочном участке(мин):")
-        self.postform_operation_time_entry = ttk.Entry(self.window, validate="key", validatecommand=(self.validate_float_cmd, '%P'))
+        self.postform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на послеформовочном участке(мин):")
+        self.postform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
 
         # Виджет ввода продолжительности цикла формования
-        self.cycle_time_label = ttk.Label(self.window, text="Продолжительность цикла формования (мин):")
-        self.cycle_time_entry = ttk.Entry(self.window, validate="key", validatecommand=(self.validate_float_cmd, '%P'))
+        self.cycle_time_label = ttk.Label(self.__window, text="Продолжительность цикла формования (мин):")
+        self.cycle_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
 
         # Переменная для хранения значения ползунка
         self.transfer_time = tk.DoubleVar(value=1.5)
         # Виджет ввода продолжительности передвижения тележек
-        self.transfer_time_label = ttk.Label(self.window, text="Продолжительность передвижения тележек (мин):")
+        self.transfer_time_label = ttk.Label(self.__window, text="Продолжительность передвижения тележек (мин):")
 
         self.transfer_time_entry = tk.Scale(
-            self.window,
+            self.__window,
             variable=self.transfer_time,
             from_=MIN_TRANSFER_TIME,
             to=MAX_TRANSFER_TIME,
@@ -71,25 +71,25 @@ class MainView:
             orient="horizontal",
             showvalue=True
             )
-        self.transfer_time_entry.bind("<ButtonRelease-1>", self.on_element_change)
+        self.transfer_time_entry.bind("<ButtonRelease-1>", self.__on_element_change)
 
         # Виджет ввода коэффициента
         self.denominator_var = tk.BooleanVar()
-        self.denomirator_label = ttk.Label(self.window, text="Использовать знаменатель коэффициента?")
-        self.denomirator_check = ttk.Checkbutton(self.window, variable=self.denominator_var)
-        self.denomirator_check.bind("<ButtonRelease-1>", self.on_element_change)
+        self.denomirator_label = ttk.Label(self.__window, text="Использовать знаменатель коэффициента?")
+        self.denomirator_check = ttk.Checkbutton(self.__window, variable=self.denominator_var)
+        self.denomirator_check.bind("<ButtonRelease-1>", self.__on_element_change)
 
         # Кнопка расчета
-        self.calculate_button = ttk.Button(self.window, text="Рассчитать", command=self.calculate)
+        self.calculate_button = ttk.Button(self.__window, text="Рассчитать", command=self.__calculate)
 
         # Виджет вывода результата
-        self.result_label = ttk.Label(self.window, text="Результат:")
+        self.result_label = ttk.Label(self.__window, text="Результат:")
         self.result_value = tk.StringVar()
-        self.result_display = ttk.Label(self.window, textvariable=self.result_value)
+        self.result_display = ttk.Label(self.__window, textvariable=self.result_value)
 
         # Кнопка экспорта
-        self.doc_button = ttk.Button(self.window, text="Экспортировать *.docx", command=self.export_docx, state="disabled")
-        self.xls_button = ttk.Button(self.window, text="Экспортировать *.xlsx", command=self.export_xlsx, state="disabled")
+        self.doc_button = ttk.Button(self.__window, text="Экспортировать *.docx", command=self.export_docx, state="disabled")
+        self.xls_button = ttk.Button(self.__window, text="Экспортировать *.xlsx", command=self.export_xlsx, state="disabled")
 
         # Размещение виджетов
 
@@ -126,7 +126,7 @@ class MainView:
         self.xls_button.grid(row=11, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=5)
 
     """Метод валидации чисел с плавающей точкой"""
-    def validate_float(self, new_value):
+    def __validate_float(self, new_value):
         if new_value == "":
             self.disable_export_buttons()
             return True
@@ -138,10 +138,10 @@ class MainView:
         finally:
             self.disable_export_buttons()
         
-    def on_element_change(self, event):
+    def __on_element_change(self, event):
         self.disable_export_buttons()
 
-    def calculate(self):
+    def __calculate(self):
         try:
             # Извлечение значений из полей ввода
             operation_type = OperationType(self.operation_type_combo.get())
@@ -154,7 +154,7 @@ class MainView:
             use_denominator = bool(self.denominator_var.get())
 
             # Вызов метода расчета в контроллере
-            self.controller.calculate_and_display(operation_type, product_complexity, preform_operation_time, form_operation_time, postform_operation_time, cycle_time, transfer_time, use_denominator)
+            self._controller.calculate_and_display(operation_type, product_complexity, preform_operation_time, form_operation_time, postform_operation_time, cycle_time, transfer_time, use_denominator)
         
             # Если расчет прошел успешно, разрешаем экспорт
             self.enable_export_buttons()
@@ -175,7 +175,7 @@ class MainView:
         data = self.get_input_data()
         data["Результат"] = self.result_value.get()
         try:
-            self.controller.export_to_docx("export.docx", data)
+            self._controller.export_to_docx("export.docx", data)
         except PermissionError:
             messagebox.showerror("Ошибка", "Недостаточно прав для доступа к файлу. Файл может быть открыт в текущий момент.")
 
@@ -183,7 +183,7 @@ class MainView:
         data = self.get_input_data()
         data["Результат"] = self.result_value.get()
         try:
-            self.controller.export_to_xlsx("export.xlsx", data)
+            self._controller.export_to_xlsx("export.xlsx", data)
         except PermissionError:
             messagebox.showerror("Ошибка", "Недостаточно прав для доступа к файлу. Файл может быть открыт в текущий момент.")
 
@@ -213,4 +213,4 @@ class MainView:
 
     # Метод запуска главного цикла обработки событий окна
     def run(self):
-        self.window.mainloop()
+        self.__window.mainloop()
