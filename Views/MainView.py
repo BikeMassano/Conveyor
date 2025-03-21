@@ -33,10 +33,12 @@ class MainView:
         # Виджет выбора типа операции
         self.operation_type_label = ttk.Label(self.window, text="Вид операций:")
         self.operation_type_combo = ttk.Combobox(self.window, values=[e.value for e in OperationType], state="readonly")
+        self.operation_type_combo.bind("<<ComboboxSelected>>", self.on_element_change)
 
         # Виджет выбора сложности изделия
         self.product_complexity_label = ttk.Label(self.window, text="Сложность изделия:")
         self.product_complexity_combo = ttk.Combobox(self.window, values=[e.value for e in ProductComplexity], state="readonly")
+        self.product_complexity_combo.bind("<<ComboboxSelected>>", self.on_element_change)
 
         # Виджет ввода средней продолжительности операции на доформовочном участке(мин):
         self.preform_operation_time_label = ttk.Label(self.window, text="Средняя продолжительность операции на доформовочном участке(мин):")
@@ -69,11 +71,13 @@ class MainView:
             orient="horizontal",
             showvalue=True
             )
+        self.transfer_time_entry.bind("<ButtonRelease-1>", self.on_element_change)
 
         # Виджет ввода коэффициента
         self.denominator_var = tk.BooleanVar()
         self.denomirator_label = ttk.Label(self.window, text="Использовать знаменатель коэффициента?")
         self.denomirator_check = ttk.Checkbutton(self.window, variable=self.denominator_var)
+        self.denomirator_check.bind("<ButtonRelease-1>", self.on_element_change)
 
         # Кнопка расчета
         self.calculate_button = ttk.Button(self.window, text="Рассчитать", command=self.calculate)
@@ -84,8 +88,8 @@ class MainView:
         self.result_display = ttk.Label(self.window, textvariable=self.result_value)
 
         # Кнопка экспорта
-        self.doc_button = ttk.Button(self.window, text="Экспортировать *.docx", command=self.export_docx)
-        self.xls_button = ttk.Button(self.window, text="Экспортировать *.xlsx", command=self.export_xlsx)
+        self.doc_button = ttk.Button(self.window, text="Экспортировать *.docx", command=self.export_docx, state="disabled")
+        self.xls_button = ttk.Button(self.window, text="Экспортировать *.xlsx", command=self.export_xlsx, state="disabled")
 
         # Размещение виджетов
 
@@ -124,13 +128,19 @@ class MainView:
     """Метод валидации чисел с плавающей точкой"""
     def validate_float(self, new_value):
         if new_value == "":
+            self.disable_export_buttons()
             return True
         try:
             float(new_value)
             return True
         except ValueError:
             return False
+        finally:
+            self.disable_export_buttons()
         
+    def on_element_change(self, event):
+        self.disable_export_buttons()
+
     def calculate(self):
         try:
             # Извлечение значений из полей ввода
@@ -145,12 +155,19 @@ class MainView:
 
             # Вызов метода расчета в контроллере
             self.controller.calculate_and_display(operation_type, product_complexity, preform_operation_time, form_operation_time, postform_operation_time, cycle_time, transfer_time, use_denominator)
+        
+            # Если расчет прошел успешно, разрешаем экспорт
+            self.enable_export_buttons()
+
         except ValueError as e:
+            self.disable_export_buttons()
             self.result_value.set("Ошибка: Введены некорректные данные.")
             messagebox.showerror("Ошибка", e)
         except ZeroDivisionError:
+            self.disable_export_buttons()
             self.result_value.set("Ошибка: В ходе расчета произошло деление на ноль. Проверьте корректность данных.")
         except Exception as e:
+            self.disable_export_buttons()
             self.result_value.set("Ошибка: Произошла непредвиденная ошибка.")
             messagebox.showerror("Ошибка", e)
 
@@ -181,6 +198,14 @@ class MainView:
             "Продолжительность передвижения тележек (мин)": self.transfer_time.get(),
             "Использовать знаменатель коэффициента?": self.denominator_var.get()
         }
+
+    def disable_export_buttons(self):
+        self.doc_button.config(state="disabled")
+        self.xls_button.config(state="disabled")
+
+    def enable_export_buttons(self):
+        self.doc_button.config(state="normal")
+        self.xls_button.config(state="normal")
 
     # Метод для заполнения поля результата
     def set_result(self, result):
