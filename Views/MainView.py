@@ -14,7 +14,7 @@ class MainView:
         self.__window = tk.Tk()
 
         # Регистрация команды валидирования float данных
-        self.__validate_float_cmd = self.__window.register(self.__validate_float)
+        self.__validate_float_cmd = (self.__window.register(self.__validate_float), '%P', 12)
 
         # Настройка окна
         self.__window.title("Вариант 19. Определение требуемого количества постов конвейерной линии.")
@@ -43,19 +43,19 @@ class MainView:
         # Виджет ввода средней продолжительности операции на доформовочном участке(мин):
         self.preform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на доформовочном участке(мин):")
         # Валидация entry происходит при нажатии клавиши(validate="key"), %P - подстановка после применения изменений
-        self.preform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
+        self.preform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода средней продолжительности операции на формовочном участке(мин):
         self.form_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на формовочном участке(мин):")
-        self.form_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
+        self.form_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода средней продолжительности операции на послеформовочном участке(мин):
         self.postform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на послеформовочном участке(мин):")
-        self.postform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
+        self.postform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода продолжительности цикла формования
         self.cycle_time_label = ttk.Label(self.__window, text="Продолжительность цикла формования (мин):")
-        self.cycle_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=(self.__validate_float_cmd, '%P'))
+        self.cycle_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Переменная для хранения значения ползунка
         self.transfer_time = tk.DoubleVar(value=1.5)
@@ -126,13 +126,13 @@ class MainView:
         self.xls_button.grid(row=11, column=0, columnspan=2, sticky=tk.EW, padx=5, pady=5)
 
     """Метод валидации чисел с плавающей точкой"""
-    def __validate_float(self, new_value):
+    def __validate_float(self, new_value, max_length):
         if new_value == "":
             self.__disable_export_buttons()
             return True
         try:
             float(new_value)
-            return True
+            return (len(new_value) <= int(max_length))
         except ValueError:
             return False
         finally:
@@ -158,7 +158,6 @@ class MainView:
         
             # Если расчет прошел успешно, разрешаем экспорт
             self.__enable_export_buttons()
-
         except ValueError as e:
             self.__disable_export_buttons()
             self.result_value.set("Ошибка: Введены некорректные данные.")
@@ -214,3 +213,4 @@ class MainView:
     # Метод запуска главного цикла обработки событий окна
     def run(self):
         self.__window.mainloop()
+
