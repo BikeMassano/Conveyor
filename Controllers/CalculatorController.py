@@ -32,10 +32,11 @@ class CalculatorController:
         result = self.__calculator.calculate_posts(segment, coefficient, use_denominator)
 
         # Форматирование результата
-        formatted_result = "{:.2f}".format(result)
+        #formatted_result = "{:.2f}".format(result)
 
         # Отображение результата
-        self.view.set_result(formatted_result)
+        #self.view.set_result(formatted_result)
+        self.view.set_result(result)
 
     def export_to_docx(self, filename, data):
         self.__export_service.export_to_docx(filename, data)

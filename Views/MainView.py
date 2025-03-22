@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
-from Model.Constants import MIN_TRANSFER_TIME, MAX_TRANSFER_TIME
+from Model.Constants import MIN_TRANSFER_TIME, MAX_TRANSFER_TIME, FLOAT_ENTRY_LENTH
 from Model.Enums.OperationType import OperationType
 from Model.Enums.ProductComplexity import ProductComplexity
 
@@ -14,12 +14,12 @@ class MainView:
         self.__window = tk.Tk()
 
         # Регистрация команды валидирования float данных
-        self.__validate_float_cmd = (self.__window.register(self.__validate_float), '%P', 12)
+        self.__validate_float_cmd = (self.__window.register(self.__validate_float), '%P', FLOAT_ENTRY_LENTH)
 
         # Настройка окна
         self.__window.title("Вариант 19. Определение требуемого количества постов конвейерной линии.")
         self.__window.geometry("700x400")
-        self.__window.minsize(700, 400)
+        self.__window.minsize(750, 400)
 
         # Настройка сетки
         self.__window.columnconfigure(0, weight=1)
@@ -41,20 +41,20 @@ class MainView:
         self.product_complexity_combo.bind("<<ComboboxSelected>>", self.__on_element_change)
 
         # Виджет ввода средней продолжительности операции на доформовочном участке(мин):
-        self.preform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на доформовочном участке(мин):")
+        self.preform_operation_time_label = ttk.Label(self.__window, text=f"Средняя продолжительность операции на доформовочном участке (мин), {FLOAT_ENTRY_LENTH} символов:")
         # Валидация entry происходит при нажатии клавиши(validate="key"), %P - подстановка после применения изменений
         self.preform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода средней продолжительности операции на формовочном участке(мин):
-        self.form_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на формовочном участке(мин):")
+        self.form_operation_time_label = ttk.Label(self.__window, text=f"Средняя продолжительность операции на формовочном участке (мин), {FLOAT_ENTRY_LENTH} символов:")
         self.form_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода средней продолжительности операции на послеформовочном участке(мин):
-        self.postform_operation_time_label = ttk.Label(self.__window, text="Средняя продолжительность операции на послеформовочном участке(мин):")
+        self.postform_operation_time_label = ttk.Label(self.__window, text=f"Средняя продолжительность операции на послеформовочном участке, {FLOAT_ENTRY_LENTH} символов:")
         self.postform_operation_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Виджет ввода продолжительности цикла формования
-        self.cycle_time_label = ttk.Label(self.__window, text="Продолжительность цикла формования (мин):")
+        self.cycle_time_label = ttk.Label(self.__window, text=f"Продолжительность цикла формования (мин), {FLOAT_ENTRY_LENTH} символов:")
         self.cycle_time_entry = ttk.Entry(self.__window, validate="key", validatecommand=self.__validate_float_cmd)
 
         # Переменная для хранения значения ползунка
