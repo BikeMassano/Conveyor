@@ -10,7 +10,7 @@ from Model.Enums.ProductComplexity import ProductComplexity
 class MainView:
     # Конструктор класса
     def __init__(self, controller):
-        self._controller = controller
+        self.controller = controller
         self.__window = tk.Tk()
 
         # Регистрация команды валидирования float данных
@@ -128,7 +128,7 @@ class MainView:
     """Метод валидации чисел с плавающей точкой"""
     def __validate_float(self, new_value):
         if new_value == "":
-            self.disable_export_buttons()
+            self.__disable_export_buttons()
             return True
         try:
             float(new_value)
@@ -136,10 +136,10 @@ class MainView:
         except ValueError:
             return False
         finally:
-            self.disable_export_buttons()
+            self.__disable_export_buttons()
         
     def __on_element_change(self, event):
-        self.disable_export_buttons()
+        self.__disable_export_buttons()
 
     def __calculate(self):
         try:
@@ -154,20 +154,20 @@ class MainView:
             use_denominator = bool(self.denominator_var.get())
 
             # Вызов метода расчета в контроллере
-            self._controller.calculate_and_display(operation_type, product_complexity, preform_operation_time, form_operation_time, postform_operation_time, cycle_time, transfer_time, use_denominator)
+            self.controller.calculate_and_display(operation_type, product_complexity, preform_operation_time, form_operation_time, postform_operation_time, cycle_time, transfer_time, use_denominator)
         
             # Если расчет прошел успешно, разрешаем экспорт
-            self.enable_export_buttons()
+            self.__enable_export_buttons()
 
         except ValueError as e:
-            self.disable_export_buttons()
+            self.__disable_export_buttons()
             self.result_value.set("Ошибка: Введены некорректные данные.")
             messagebox.showerror("Ошибка", e)
         except ZeroDivisionError:
-            self.disable_export_buttons()
+            self.__disable_export_buttons()
             self.result_value.set("Ошибка: В ходе расчета произошло деление на ноль. Проверьте корректность данных.")
         except Exception as e:
-            self.disable_export_buttons()
+            self.__disable_export_buttons()
             self.result_value.set("Ошибка: Произошла непредвиденная ошибка.")
             messagebox.showerror("Ошибка", e)
 
@@ -175,7 +175,7 @@ class MainView:
         data = self.get_input_data()
         data["Результат"] = self.result_value.get()
         try:
-            self._controller.export_to_docx("export.docx", data)
+            self.controller.export_to_docx("export.docx", data)
         except PermissionError:
             messagebox.showerror("Ошибка", "Недостаточно прав для доступа к файлу. Файл может быть открыт в текущий момент.")
 
@@ -183,7 +183,7 @@ class MainView:
         data = self.get_input_data()
         data["Результат"] = self.result_value.get()
         try:
-            self._controller.export_to_xlsx("export.xlsx", data)
+            self.controller.export_to_xlsx("export.xlsx", data)
         except PermissionError:
             messagebox.showerror("Ошибка", "Недостаточно прав для доступа к файлу. Файл может быть открыт в текущий момент.")
 
@@ -199,11 +199,11 @@ class MainView:
             "Использовать знаменатель коэффициента?": self.denominator_var.get()
         }
 
-    def disable_export_buttons(self):
+    def __disable_export_buttons(self):
         self.doc_button.config(state="disabled")
         self.xls_button.config(state="disabled")
 
-    def enable_export_buttons(self):
+    def __enable_export_buttons(self):
         self.doc_button.config(state="normal")
         self.xls_button.config(state="normal")
 

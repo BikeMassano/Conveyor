@@ -5,8 +5,8 @@ from Model.ConveyorLineSegment import ConveyorLineSegment
 
 class CalculatorController:
     def __init__(self, view, calculator, export_service):
-        # Текцущее представление
-        self.__view = view
+        # Текущее представление
+        self.view = view
         # Сервис для подсчёта количества постов
         self.__calculator = calculator
         # Сервис экспорта
@@ -26,8 +26,7 @@ class CalculatorController:
         # Поиск коэффициента для заданной пары значений
         coefficient = self.__coefficients.get((operation_type, product_complexity))
         if not coefficient:
-            self.__view.set_result("Ошибка: Не найден коэффициент для указанных параметров")
-            return
+            raise ValueError("Ошибка: Не найден коэффициент для указанных параметров")
 
         # Вычисление количества постов
         result = self.__calculator.calculate_posts(segment, coefficient, use_denominator)
@@ -36,7 +35,7 @@ class CalculatorController:
         formatted_result = "{:.2f}".format(result)
 
         # Отображение результата
-        self.__view.set_result(formatted_result)
+        self.view.set_result(formatted_result)
 
     def export_to_docx(self, filename, data):
         self.__export_service.export_to_docx(filename, data)

@@ -9,5 +9,5 @@ if __name__ == "__main__":
     export_service = ExportService()
     view = MainView(None)
     controller = CalculatorController(view, calculation_service, export_service)
-    view._controller = controller
+    view.controller = controller
     view.run()
